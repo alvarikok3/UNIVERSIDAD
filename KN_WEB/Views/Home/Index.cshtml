@@ -2,6 +2,143 @@
     ViewBag.Title = "Home Page";
 }
 
-<main>
-    <h1>HOLAA</h1>
-</main>
+<div class="container-fluid p-0">
+
+    <!-- PORTADA -->
+    <div class="bg-dark text-white text-center p-5"
+         style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
+                url('/Content/img/fondo-bus.jpg');
+                background-size: cover;
+                background-position: center;
+                min-height: 400px;">
+
+        <div class="d-flex flex-column justify-content-center align-items-center h-100">
+
+            <h1 class="display-4 fw-bold mb-3">
+                Bienvenido a Pura Vida Buses
+            </h1>
+
+            <p class="fs-4 mb-4">
+                Donde cada viaje es una experiencia
+            </p>
+
+            <a href="@Url.Action("Informacion","Home")"
+               class="btn btn-warning btn-lg px-4">
+
+                Conocer Más
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- DATOS -->
+    <div class="container mt-5">
+
+        <div class="row text-center mb-5">
+
+
+            <div class="col-md-3">
+                <h1 class="text-primary fw-bold">+120</h1>
+                <p class="text-muted">Rutas Activas</p>
+            </div>
+
+
+            <div class="col-md-3">
+                <h1 class="text-success fw-bold">+50K</h1>
+                <p class="text-muted">Clientes</p>
+            </div>
+
+
+            <div class="col-md-3">
+                <h1 class="text-warning fw-bold">24/7</h1>
+                <p class="text-muted">Servicio</p>
+            </div>
+
+
+            <div class="col-md-3">
+                <h1 class="text-info fw-bold">15+</h1>
+                <p class="text-muted">Años</p>
+            </div>
+
+
+        </div>
+
+
+        <!-- MENSAJE -->
+        <div class="row align-items-center mb-5">
+
+
+            <div class="col-md-6">
+
+                <h2 class="fw-bold mb-3">
+                    Comprometidos con tu seguridad
+                </h2>
+
+                <p class="text-muted fs-5">
+
+                    En Pura Vida Buses trabajamos cada día
+                    para ofrecerte viajes confiables,
+                    modernos y accesibles, usando tecnología
+                    y personal capacitado.
+
+                </p>
+
+                <a href="@Url.Action("Contacto","Home")"
+                   class="btn btn-outline-primary mt-3">
+
+                    Escríbenos
+                </a>
+
+            </div>
+
+
+            <div class="col-md-6 text-center">
+
+                <img src="~/Content/img/bus2.png"
+                     class="img-fluid rounded shadow"
+                     style="max-height:300px;" />
+
+            </div>
+
+
+        </div>
+
+
+        <!-- FRASE -->
+        <div class="bg-light rounded shadow p-4 text-center mb-5">
+
+            <h3 class="fw-bold text-primary">
+
+                “Viajar bien no es un lujo,
+                es un derecho”
+
+            </h3>
+
+            <p class="text-muted mt-2">
+                Pura Vida Buses
+            </p>
+
+        </div>
+
+
+        <!-- BOTÓN FINAL -->
+        <div class="text-center mb-5">
+
+            <h4 class="mb-3">
+                ¿Listo para viajar?
+            </h4>
+
+            <a href="@Url.Action("Reservas","Home")"
+               class="btn btn-success btn-lg px-5">
+
+                Reservar Ahora
+            </a>
+
+        </div>
+
+
+    </div>
+
+</div>

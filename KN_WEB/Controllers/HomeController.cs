@@ -20,7 +20,7 @@ namespace KN_WEB.Controllers
             return View();
         }
 
-        public ActionResult Contact()
+        public ActionResult Horario()
         {
             ViewBag.Message = "Your contact page.";
 
