@@ -1,63 +1,59 @@
 ﻿@{
-    ViewBag.Title = "Login";
+    ViewBag.Title = "Registro";
 }
-
 
 <div class="row justify-content-center">
     <div class="col-lg-6 col-md-8 col-sm-12">
         <div class="card-style mb-30">
-
             <h4 class="mb-25 text-center">Crear Cuenta</h4>
 
-            <form>
+            @if (ViewBag.Mensaje != null)
+            {
+                <div class="alert alert-success text-center">
+                    @ViewBag.Mensaje
+                </div>
+            }
 
-                <!-- Nombre -->
+            @using (Html.BeginForm("Login", "Home", FormMethod.Post))
+            {
                 <div class="input-style-1">
                     <label>Nombre</label>
-                    <input type="text" placeholder="Ingrese su nombre" required>
+                    <input type="text" name="nombre" placeholder="Ingrese su nombre" required />
                 </div>
 
-                <!-- Apellido -->
                 <div class="input-style-1">
                     <label>Apellido</label>
-                    <input type="text" placeholder="Ingrese su apellido" required>
+                    <input type="text" name="apellido" placeholder="Ingrese su apellido" required />
                 </div>
 
-                <!-- Correo -->
                 <div class="input-style-1">
                     <label>Correo Electrónico</label>
-                    <input type="email" placeholder="ejemplo@correo.com" required>
+                    <input type="email" name="email" placeholder="ejemplo@correo.com" required />
                 </div>
 
-                <!-- Contraseña -->
                 <div class="input-style-1">
                     <label>Contraseña</label>
-                    <input type="password" placeholder="Ingrese su contraseña" required>
+                    <input type="password" name="password" placeholder="Ingrese su contraseña" required />
                 </div>
 
-                <!-- Confirmar -->
                 <div class="input-style-1">
                     <label>Confirmar Contraseña</label>
-                    <input type="password" placeholder="Repita su contraseña" required>
+                    <input type="password" name="confirmarPassword" placeholder="Repita su contraseña" required />
                 </div>
 
-                <!-- Botón -->
                 <div class="text-center mt-20">
                     <button type="submit" class="main-btn primary-btn btn-hover w-100">
                         Registrarse
                     </button>
                 </div>
 
-                <!-- Link login -->
                 <div class="text-center mt-15">
                     <p class="text-sm">
                         ¿Ya tienes cuenta?
-                        <a href="login.html">Inicia sesión</a>
+                        <a href="@Url.Action("Inicio", "Home")">Inicia sesión</a>
                     </p>
                 </div>
-
-            </form>
-
+            }
         </div>
     </div>
 </div>

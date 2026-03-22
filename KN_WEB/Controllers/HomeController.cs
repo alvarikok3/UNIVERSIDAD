@@ -15,40 +15,40 @@ namespace KN_WEB.Controllers
 
         public ActionResult About()
         {
-            ViewBag.Message = "Your application description page.";
-
             return View();
         }
 
         public ActionResult Horario()
         {
-            ViewBag.Message = "Your contact page.";
-
             return View();
         }
 
         public ActionResult Inicio()
         {
-            ViewBag.Message = "Your contact page.";
-
             return View();
         }
 
         public ActionResult Login()
         {
-            ViewBag.Message = "Your contact page.";
+            return View();
+        }
 
+        [HttpPost]
+        public ActionResult Login(string nombre, string apellido, string email, string password, string confirmarPassword)
+        {
+            if (password != confirmarPassword)
+            {
+                ViewBag.Mensaje = "Las contraseñas no coinciden.";
+                return View();
+            }
+
+            ViewBag.Mensaje = "Registro enviado correctamente. Falta guardar en base de datos.";
             return View();
         }
 
         public ActionResult Informacion()
         {
-            ViewBag.Message = "Your contact page.";
-
             return View();
         }
-
-
-
     }
 }
