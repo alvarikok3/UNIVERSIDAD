@@ -22,12 +22,48 @@ namespace KN_WEB.Controllers
             return View();
         }
 
+        // GET: Muestra formulario de login
         public ActionResult Inicio()
         {
             return View();
         }
 
-        // GET: Muestra el formulario
+        // POST: Procesa login
+        [HttpPost]
+        public ActionResult Inicio(string email, string password)
+        {
+            string conexion = ConfigurationManager.ConnectionStrings["KN_WEB_DB"].ConnectionString;
+
+            using (SqlConnection con = new SqlConnection(conexion))
+            {
+                con.Open();
+
+                string query = @"SELECT nombre, email
+                                 FROM Usuario
+                                 WHERE email = @email AND password_hash = @password_hash AND activo = 1";
+
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@email", email);
+                cmd.Parameters.AddWithValue("@password_hash", password);
+
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                if (reader.Read())
+                {
+                    Session["UsuarioNombre"] = reader["nombre"].ToString();
+                    Session["UsuarioEmail"] = reader["email"].ToString();
+
+                    return RedirectToAction("Index");
+                }
+
+                reader.Close();
+            }
+
+            ViewBag.Mensaje = "Correo o contraseña incorrectos.";
+            return View();
+        }
+
+        // GET: Muestra el formulario de registro
         public ActionResult Login()
         {
             return View();
@@ -50,7 +86,6 @@ namespace KN_WEB.Controllers
             {
                 con.Open();
 
-                // VALIDAR SI YA EXISTE EL CORREO
                 string consultaCorreo = "SELECT COUNT(*) FROM Usuario WHERE email = @email";
                 SqlCommand cmdValidar = new SqlCommand(consultaCorreo, con);
                 cmdValidar.Parameters.AddWithValue("@email", email);
@@ -63,7 +98,6 @@ namespace KN_WEB.Controllers
                     return View();
                 }
 
-                // INSERTAR USUARIO
                 string query = @"INSERT INTO Usuario (nombre, email, password_hash, activo)
                                  VALUES (@nombre, @email, @password_hash, @activo)";
 
@@ -83,6 +117,13 @@ namespace KN_WEB.Controllers
         public ActionResult Informacion()
         {
             return View();
+        }
+
+        public ActionResult CerrarSesion()
+        {
+            Session.Clear();
+            Session.Abandon();
+            return RedirectToAction("Inicio");
         }
     }
 }
