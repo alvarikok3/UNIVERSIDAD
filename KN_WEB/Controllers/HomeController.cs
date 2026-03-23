@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Configuration;
+using System.Data;
 using System.Data.SqlClient;
 using System.Web.Mvc;
 
@@ -22,13 +23,11 @@ namespace KN_WEB.Controllers
             return View();
         }
 
-        // GET: Muestra formulario de login
         public ActionResult Inicio()
         {
             return View();
         }
 
-        // POST: Procesa login
         [HttpPost]
         public ActionResult Inicio(string email, string password)
         {
@@ -40,7 +39,9 @@ namespace KN_WEB.Controllers
 
                 string query = @"SELECT nombre, email
                                  FROM Usuario
-                                 WHERE email = @email AND password_hash = @password_hash AND activo = 1";
+                                 WHERE email = @email 
+                                   AND password_hash = @password_hash 
+                                   AND activo = 1";
 
                 SqlCommand cmd = new SqlCommand(query, con);
                 cmd.Parameters.AddWithValue("@email", email);
@@ -52,7 +53,6 @@ namespace KN_WEB.Controllers
                 {
                     Session["UsuarioNombre"] = reader["nombre"].ToString();
                     Session["UsuarioEmail"] = reader["email"].ToString();
-
                     return RedirectToAction("Index");
                 }
 
@@ -63,13 +63,11 @@ namespace KN_WEB.Controllers
             return View();
         }
 
-        // GET: Muestra el formulario de registro
         public ActionResult Login()
         {
             return View();
         }
 
-        // POST: Procesa el registro
         [HttpPost]
         public ActionResult Login(string nombre, string apellido, string email, string password, string confirmarPassword)
         {
@@ -116,6 +114,50 @@ namespace KN_WEB.Controllers
 
         public ActionResult Informacion()
         {
+            return View();
+        }
+
+        public ActionResult Reservas()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Reservas(string origen, string destino, string fechaViaje, int cantidadPasajeros = 1)
+        {
+            string conexion = ConfigurationManager.ConnectionStrings["KN_WEB_DB"].ConnectionString;
+            DataTable tablaResultados = new DataTable();
+
+            using (SqlConnection con = new SqlConnection(conexion))
+            {
+                string query = @"
+                    SELECT 
+                        r.origen,
+                        r.destino,
+                        h.hora_salida,
+                        h.hora_llegada,
+                        h.dias_servicio,
+                        b.capacidad,
+                        b.placa
+                    FROM Ruta r
+                    INNER JOIN Horario h ON r.id_ruta = h.id_ruta
+                    INNER JOIN Bus b ON h.id_bus = b.id_bus
+                    WHERE r.activa = 1
+                      AND UPPER(LTRIM(RTRIM(r.origen))) LIKE '%' + UPPER(LTRIM(RTRIM(@origen))) + '%'
+                      AND UPPER(LTRIM(RTRIM(r.destino))) LIKE '%' + UPPER(LTRIM(RTRIM(@destino))) + '%'";
+
+                SqlDataAdapter da = new SqlDataAdapter(query, con);
+                da.SelectCommand.Parameters.AddWithValue("@origen", origen ?? "");
+                da.SelectCommand.Parameters.AddWithValue("@destino", destino ?? "");
+                da.Fill(tablaResultados);
+            }
+
+            ViewBag.FechaViaje = fechaViaje;
+            ViewBag.CantidadPasajeros = cantidadPasajeros;
+            ViewBag.Origen = origen;
+            ViewBag.Destino = destino;
+            ViewBag.Resultados = tablaResultados;
+
             return View();
         }
 

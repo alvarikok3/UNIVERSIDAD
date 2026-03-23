@@ -1,0 +1,105 @@
+@using System.Data
+@{
+    ViewBag.Title = "Reservas";
+    var resultados = ViewBag.Resultados as DataTable;
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-10 col-md-12">
+        <div class="card-style mb-30">
+            <h2 class="mb-25 text-center">Reserva tu viaje</h2>
+            <p class="text-center mb-30">
+                Busca rutas y horarios disponibles en <strong>Pura Vida Buses</strong>.
+            </p>
+
+            @using (Html.BeginForm("Reservas", "Home", FormMethod.Post))
+            {
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="input-style-1">
+                            <label>Origen</label>
+                            <input type="text" name="origen" placeholder="Ingrese el origen"
+                                   value="@(ViewBag.Origen ?? "")" required />
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="input-style-1">
+                            <label>Destino</label>
+                            <input type="text" name="destino" placeholder="Ingrese el destino"
+                                   value="@(ViewBag.Destino ?? "")" required />
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="input-style-1">
+                            <label>Fecha de viaje</label>
+                            <input type="date" name="fechaViaje"
+                                   value="@(ViewBag.FechaViaje ?? "")" required />
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="input-style-1">
+                            <label>Cantidad de pasajeros</label>
+                            <input type="number" name="cantidadPasajeros" min="1" max="10"
+                                   value="@(ViewBag.CantidadPasajeros ?? 1)" required />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-30">
+                    <button type="submit" class="main-btn primary-btn btn-hover">
+                        Buscar viajes disponibles
+                    </button>
+                </div>
+            }
+
+            @if (resultados != null)
+            {
+                <hr class="my-4" />
+
+                <h4 class="text-center mb-20">Resultados encontrados</h4>
+
+                if (resultados.Rows.Count > 0)
+                {
+                    <div class="table-wrapper table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th><h6>Origen</h6></th>
+                                    <th><h6>Destino</h6></th>
+                                    <th><h6>Salida</h6></th>
+                                    <th><h6>Llegada</h6></th>
+                                    <th><h6>Días</h6></th>
+                                    <th><h6>Bus</h6></th>
+                                    <th><h6>Capacidad</h6></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (DataRow fila in resultados.Rows)
+                                {
+                                    <tr>
+                                        <td>@fila["origen"]</td>
+                                        <td>@fila["destino"]</td>
+                                        <td>@fila["hora_salida"]</td>
+                                        <td>@fila["hora_llegada"]</td>
+                                        <td>@fila["dias_servicio"]</td>
+                                        <td>@fila["placa"]</td>
+                                        <td>@fila["capacidad"]</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-warning text-center mt-3">
+                        No se encontraron viajes para esa búsqueda.
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
