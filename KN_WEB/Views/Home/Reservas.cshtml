@@ -58,7 +58,6 @@
             @if (resultados != null)
             {
                 <hr class="my-4" />
-
                 <h4 class="text-center mb-20">Resultados encontrados</h4>
 
                 if (resultados.Rows.Count > 0)
@@ -74,6 +73,7 @@
                                     <th><h6>Días</h6></th>
                                     <th><h6>Bus</h6></th>
                                     <th><h6>Capacidad</h6></th>
+                                    <th><h6>Acción</h6></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -87,6 +87,22 @@
                                         <td>@fila["dias_servicio"]</td>
                                         <td>@fila["placa"]</td>
                                         <td>@fila["capacidad"]</td>
+                                        <td>
+                                            <a href="@Url.Action("ConfirmarReserva", "Home", new {
+                                                    origen = fila["origen"],
+                                                    destino = fila["destino"],
+                                                    salida = fila["hora_salida"],
+                                                    llegada = fila["hora_llegada"],
+                                                    dias = fila["dias_servicio"],
+                                                    bus = fila["placa"],
+                                                    capacidad = fila["capacidad"],
+                                                    fechaViaje = ViewBag.FechaViaje,
+                                                    cantidadPasajeros = ViewBag.CantidadPasajeros
+                                                })"
+                                               class="main-btn primary-btn btn-hover btn-sm">
+                                                Seleccionar
+                                            </a>
+                                        </td>
                                     </tr>
                                 }
                             </tbody>

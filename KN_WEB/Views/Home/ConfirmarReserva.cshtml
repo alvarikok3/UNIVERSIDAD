@@ -1,0 +1,72 @@
+@{
+    ViewBag.Title = "Confirmar Reserva";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+        <div class="card-style mb-30">
+            <h2 class="mb-25 text-center">Confirmar reserva</h2>
+
+            @using (Html.BeginForm("ConfirmarReserva", "Home", FormMethod.Post))
+            {
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <th>Origen</th>
+                            <td>@ViewBag.Origen</td>
+                        </tr>
+                        <tr>
+                            <th>Destino</th>
+                            <td>@ViewBag.Destino</td>
+                        </tr>
+                        <tr>
+                            <th>Hora de salida</th>
+                            <td>@ViewBag.Salida</td>
+                        </tr>
+                        <tr>
+                            <th>Hora de llegada</th>
+                            <td>@ViewBag.Llegada</td>
+                        </tr>
+                        <tr>
+                            <th>Días de servicio</th>
+                            <td>@ViewBag.Dias</td>
+                        </tr>
+                        <tr>
+                            <th>Bus</th>
+                            <td>@ViewBag.Bus</td>
+                        </tr>
+                        <tr>
+                            <th>Capacidad</th>
+                            <td>@ViewBag.Capacidad</td>
+                        </tr>
+                        <tr>
+                            <th>Fecha de viaje</th>
+                            <td>@ViewBag.FechaViaje</td>
+                        </tr>
+                        <tr>
+                            <th>Cantidad de pasajeros</th>
+                            <td>@ViewBag.CantidadPasajeros</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <input type="hidden" name="origen" value="@ViewBag.Origen" />
+                <input type="hidden" name="destino" value="@ViewBag.Destino" />
+                <input type="hidden" name="salida" value="@ViewBag.Salida" />
+                <input type="hidden" name="llegada" value="@ViewBag.Llegada" />
+                <input type="hidden" name="fechaViaje" value="@ViewBag.FechaViaje" />
+                <input type="hidden" name="cantidadPasajeros" value="@ViewBag.CantidadPasajeros" />
+
+                <div class="text-center mt-4">
+                    <a href="@Url.Action("Reservas", "Home")" class="main-btn light-btn btn-hover">
+                        Volver
+                    </a>
+
+                    <button type="submit" class="main-btn primary-btn btn-hover">
+                        Confirmar compra
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
