@@ -2,6 +2,7 @@
 @{
     ViewBag.Title = "Reservas";
     var resultados = ViewBag.Resultados as DataTable;
+    var hoy = DateTime.Now.ToString("yyyy-MM-dd");
 }
 
 <div class="row justify-content-center">
@@ -12,38 +13,58 @@
                 Busca rutas y horarios disponibles en <strong>Pura Vida Buses</strong>.
             </p>
 
+            @if (TempData["MensajeReserva"] != null)
+            {
+                <div class="alert alert-success text-center mb-3">
+                    @TempData["MensajeReserva"]
+                </div>
+            }
+
             @using (Html.BeginForm("Reservas", "Home", FormMethod.Post))
             {
                 <div class="row">
                     <div class="col-md-6">
                         <div class="input-style-1">
                             <label>Origen</label>
-                            <input type="text" name="origen" placeholder="Ingrese el origen"
-                                   value="@(ViewBag.Origen ?? "")" required />
+                            <input type="text"
+                                   name="origen"
+                                   placeholder="Ingrese el origen"
+                                   value="@(ViewBag.Origen ?? "")"
+                                   required />
                         </div>
                     </div>
 
                     <div class="col-md-6">
                         <div class="input-style-1">
                             <label>Destino</label>
-                            <input type="text" name="destino" placeholder="Ingrese el destino"
-                                   value="@(ViewBag.Destino ?? "")" required />
+                            <input type="text"
+                                   name="destino"
+                                   placeholder="Ingrese el destino"
+                                   value="@(ViewBag.Destino ?? "")"
+                                   required />
                         </div>
                     </div>
 
                     <div class="col-md-6">
                         <div class="input-style-1">
                             <label>Fecha de viaje</label>
-                            <input type="date" name="fechaViaje"
-                                   value="@(ViewBag.FechaViaje ?? "")" required />
+                            <input type="date"
+                                   name="fechaViaje"
+                                   min="@hoy"
+                                   value="@(ViewBag.FechaViaje ?? hoy)"
+                                   required />
                         </div>
                     </div>
 
                     <div class="col-md-6">
                         <div class="input-style-1">
                             <label>Cantidad de pasajeros</label>
-                            <input type="number" name="cantidadPasajeros" min="1" max="10"
-                                   value="@(ViewBag.CantidadPasajeros ?? 1)" required />
+                            <input type="number"
+                                   name="cantidadPasajeros"
+                                   min="1"
+                                   max="10"
+                                   value="@(ViewBag.CantidadPasajeros ?? 1)"
+                                   required />
                         </div>
                     </div>
                 </div>

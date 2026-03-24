@@ -1,0 +1,55 @@
+@{
+    ViewBag.Title = "Pago Simulado";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+        <div class="card-style mb-30">
+            <h2 class="mb-25 text-center">Pago simulado</h2>
+
+            @if (ViewBag.Mensaje != null)
+            {
+                <div class="alert alert-warning text-center">
+                    @ViewBag.Mensaje
+                </div>
+            }
+
+            @using (Html.BeginForm("Pago", "Home", FormMethod.Post))
+            {
+                <input type="hidden" name="idReserva" value="@ViewBag.IdReserva" />
+
+                <div class="input-style-1">
+                    <label>Nombre en la tarjeta</label>
+                    <input type="text" name="nombreTarjeta" placeholder="Como aparece en la tarjeta" required />
+                </div>
+
+                <div class="input-style-1">
+                    <label>Número de tarjeta</label>
+                    <input type="text" name="numeroTarjeta" placeholder="1234123412341234" maxlength="16" required />
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="input-style-1">
+                            <label>Fecha de expiración</label>
+                            <input type="text" name="fechaExpiracion" placeholder="MM/AA" required />
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="input-style-1">
+                            <label>CVV</label>
+                            <input type="password" name="cvv" placeholder="123" maxlength="4" required />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <button type="submit" class="main-btn success-btn btn-hover">
+                        Pagar ahora
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</div>

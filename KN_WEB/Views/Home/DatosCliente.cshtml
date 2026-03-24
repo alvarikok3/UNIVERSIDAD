@@ -1,0 +1,37 @@
+@{
+    ViewBag.Title = "Datos del Cliente";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+        <div class="card-style mb-30">
+            <h2 class="mb-25 text-center">Datos del cliente</h2>
+
+            @using (Html.BeginForm("DatosCliente", "Home", FormMethod.Post))
+            {
+                <input type="hidden" name="idReserva" value="@ViewBag.IdReserva" />
+
+                <div class="input-style-1">
+                    <label>Nombre completo</label>
+                    <input type="text" name="nombreCliente" placeholder="Ingrese su nombre completo" required />
+                </div>
+
+                <div class="input-style-1">
+                    <label>Correo electrónico</label>
+                    <input type="email" name="correoCliente" placeholder="ejemplo@correo.com" required />
+                </div>
+
+                <div class="input-style-1">
+                    <label>Teléfono</label>
+                    <input type="text" name="telefonoCliente" placeholder="8888-8888" required />
+                </div>
+
+                <div class="text-center mt-4">
+                    <button type="submit" class="main-btn primary-btn btn-hover">
+                        Continuar al pago
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</div>

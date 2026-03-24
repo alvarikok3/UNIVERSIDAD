@@ -193,11 +193,11 @@ namespace KN_WEB.Controllers
                     SqlCommand cmdUsuario = new SqlCommand(queryUsuario, con);
                     cmdUsuario.Parameters.AddWithValue("@email", Session["UsuarioEmail"].ToString());
 
-                    object resultado = cmdUsuario.ExecuteScalar();
+                    object resultadoUsuario = cmdUsuario.ExecuteScalar();
 
-                    if (resultado != null)
+                    if (resultadoUsuario != null)
                     {
-                        idUsuario = Convert.ToInt32(resultado);
+                        idUsuario = Convert.ToInt32(resultadoUsuario);
                     }
                 }
             }
@@ -225,8 +225,8 @@ namespace KN_WEB.Controllers
                 else
                     cmd.Parameters.AddWithValue("@id_usuario", DBNull.Value);
 
-                object resultado = cmd.ExecuteScalar();
-                idReserva = Convert.ToInt32(resultado);
+                object resultadoReserva = cmd.ExecuteScalar();
+                idReserva = Convert.ToInt32(resultadoReserva);
             }
 
             return RedirectToAction("ElegirAsiento", new { idReserva = idReserva });
@@ -268,8 +268,108 @@ namespace KN_WEB.Controllers
                 cmd.ExecuteNonQuery();
             }
 
-            TempData["MensajeReserva"] = "Reserva y asiento guardados correctamente.";
-            return RedirectToAction("Reservas");
+            return RedirectToAction("DatosCliente", new { idReserva = idReserva });
+        }
+
+        public ActionResult DatosCliente(int idReserva)
+        {
+            ViewBag.IdReserva = idReserva;
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult DatosCliente(int idReserva, string nombreCliente, string correoCliente, string telefonoCliente)
+        {
+            string conexion = ConfigurationManager.ConnectionStrings["KN_WEB_DB"].ConnectionString;
+
+            using (SqlConnection con = new SqlConnection(conexion))
+            {
+                con.Open();
+
+                string query = @"UPDATE Reserva
+                                 SET nombre_cliente = @nombre_cliente,
+                                     correo_cliente = @correo_cliente,
+                                     telefono_cliente = @telefono_cliente
+                                 WHERE id_reserva = @id_reserva";
+
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@nombre_cliente", nombreCliente);
+                cmd.Parameters.AddWithValue("@correo_cliente", correoCliente);
+                cmd.Parameters.AddWithValue("@telefono_cliente", telefonoCliente);
+                cmd.Parameters.AddWithValue("@id_reserva", idReserva);
+
+                cmd.ExecuteNonQuery();
+            }
+
+            return RedirectToAction("Pago", new { idReserva = idReserva });
+        }
+
+        public ActionResult Pago(int idReserva)
+        {
+            ViewBag.IdReserva = idReserva;
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Pago(int idReserva, string nombreTarjeta, string numeroTarjeta, string fechaExpiracion, string cvv)
+        {
+            if (string.IsNullOrWhiteSpace(nombreTarjeta) ||
+                string.IsNullOrWhiteSpace(numeroTarjeta) ||
+                string.IsNullOrWhiteSpace(fechaExpiracion) ||
+                string.IsNullOrWhiteSpace(cvv))
+            {
+                ViewBag.IdReserva = idReserva;
+                ViewBag.Mensaje = "Debes completar todos los datos del pago.";
+                return View();
+            }
+
+            string ultimos4 = numeroTarjeta.Length >= 4
+                ? numeroTarjeta.Substring(numeroTarjeta.Length - 4)
+                : numeroTarjeta;
+
+            string mascara = "****-****-****-" + ultimos4;
+
+            string conexion = ConfigurationManager.ConnectionStrings["KN_WEB_DB"].ConnectionString;
+
+            using (SqlConnection con = new SqlConnection(conexion))
+            {
+                con.Open();
+
+                string query = @"UPDATE Reserva
+                                 SET estado_pago = 'Pagado',
+                                     tarjeta_mascara = @tarjeta_mascara,
+                                     fecha_pago = GETDATE()
+                                 WHERE id_reserva = @id_reserva";
+
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@tarjeta_mascara", mascara);
+                cmd.Parameters.AddWithValue("@id_reserva", idReserva);
+
+                cmd.ExecuteNonQuery();
+            }
+
+            return RedirectToAction("ConfirmacionFinal", new { idReserva = idReserva });
+        }
+
+        public ActionResult ConfirmacionFinal(int idReserva)
+        {
+            string conexion = ConfigurationManager.ConnectionStrings["KN_WEB_DB"].ConnectionString;
+            DataTable tabla = new DataTable();
+
+            using (SqlConnection con = new SqlConnection(conexion))
+            {
+                string query = "SELECT * FROM Reserva WHERE id_reserva = @id_reserva";
+                SqlDataAdapter da = new SqlDataAdapter(query, con);
+                da.SelectCommand.Parameters.AddWithValue("@id_reserva", idReserva);
+                da.Fill(tabla);
+            }
+
+            if (tabla.Rows.Count > 0)
+            {
+                ViewBag.Reserva = tabla.Rows[0];
+            }
+
+            return View();
         }
 
         public ActionResult CerrarSesion()

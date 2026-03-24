@@ -1,0 +1,44 @@
+@using System.Data
+@{
+    ViewBag.Title = "Confirmación Final";
+    var reserva = ViewBag.Reserva as DataRow;
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+        <div class="card-style mb-30">
+            <h2 class="mb-25 text-center">Compra confirmada</h2>
+
+            @if (reserva != null)
+            {
+                <div class="alert alert-success text-center">
+                    Pago realizado correctamente. Su boleto fue generado exitosamente.
+                </div>
+
+                <table class="table">
+                    <tbody>
+                        <tr><th>ID Reserva</th><td>@reserva["id_reserva"]</td></tr>
+                        <tr><th>Origen</th><td>@reserva["origen"]</td></tr>
+                        <tr><th>Destino</th><td>@reserva["destino"]</td></tr>
+                        <tr><th>Fecha de viaje</th><td>@reserva["fecha_viaje"]</td></tr>
+                        <tr><th>Hora salida</th><td>@reserva["hora_salida"]</td></tr>
+                        <tr><th>Hora llegada</th><td>@reserva["hora_llegada"]</td></tr>
+                        <tr><th>Pasajeros</th><td>@reserva["cantidad_pasajeros"]</td></tr>
+                        <tr><th>Cliente</th><td>@reserva["nombre_cliente"]</td></tr>
+                        <tr><th>Correo</th><td>@reserva["correo_cliente"]</td></tr>
+                        <tr><th>Teléfono</th><td>@reserva["telefono_cliente"]</td></tr>
+                        <tr><th>Estado pago</th><td>@reserva["estado_pago"]</td></tr>
+                        <tr><th>Tarjeta</th><td>@reserva["tarjeta_mascara"]</td></tr>
+                        <tr><th>Fecha pago</th><td>@reserva["fecha_pago"]</td></tr>
+                    </tbody>
+                </table>
+            }
+
+            <div class="text-center mt-4">
+                <a href="@Url.Action("Inicio", "Home")" class="main-btn primary-btn btn-hover">
+                    Volver al inicio
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
