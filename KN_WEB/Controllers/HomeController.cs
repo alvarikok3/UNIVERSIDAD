@@ -143,12 +143,12 @@ namespace KN_WEB.Controllers
                     INNER JOIN Horario h ON r.id_ruta = h.id_ruta
                     INNER JOIN Bus b ON h.id_bus = b.id_bus
                     WHERE r.activa = 1
-                      AND UPPER(LTRIM(RTRIM(r.origen))) LIKE '%' + UPPER(LTRIM(RTRIM(@origen))) + '%'
-                      AND UPPER(LTRIM(RTRIM(r.destino))) LIKE '%' + UPPER(LTRIM(RTRIM(@destino))) + '%'";
+                      AND UPPER(r.origen) LIKE '%' + UPPER(@origen) + '%'
+                      AND UPPER(r.destino) LIKE '%' + UPPER(@destino) + '%'";
 
                 SqlDataAdapter da = new SqlDataAdapter(query, con);
-                da.SelectCommand.Parameters.AddWithValue("@origen", origen ?? "");
-                da.SelectCommand.Parameters.AddWithValue("@destino", destino ?? "");
+                da.SelectCommand.Parameters.AddWithValue("@origen", (origen ?? "").Trim());
+                da.SelectCommand.Parameters.AddWithValue("@destino", (destino ?? "").Trim());
                 da.Fill(tablaResultados);
             }
 
@@ -328,7 +328,6 @@ namespace KN_WEB.Controllers
                 : numeroTarjeta;
 
             string mascara = "****-****-****-" + ultimos4;
-
             string conexion = ConfigurationManager.ConnectionStrings["KN_WEB_DB"].ConnectionString;
 
             using (SqlConnection con = new SqlConnection(conexion))
