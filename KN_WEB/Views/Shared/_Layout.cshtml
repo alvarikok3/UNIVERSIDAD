@@ -1,11 +1,8 @@
 ﻿<!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <link rel="shortcut icon" href="@Url.Content("~/favicon.ico")" type="image/x-icon" />
     <title>@ViewBag.Title - Pura Vida Buses</title>
 
     <link href="~/Template/css/bootstrap.min.css" rel="stylesheet" />
@@ -22,33 +19,13 @@
 
     <aside class="sidebar-nav-wrapper">
         <div class="navbar-logo">
-            <a href="@Url.Action("Inicio", "Home")" style="font-size: 24px; font-weight: bold; color: #2f54eb; text-decoration: none;">
+            <a href="@Url.Action("Index", "Home")" style="font-size:20px; font-weight:bold; color:#2f55d4; text-decoration:none;">
                 Pura Vida Buses
             </a>
         </div>
 
         <nav class="sidebar-nav">
             <ul>
-                <li class="nav-item nav-item-has-children">
-                    <a href="#0"
-                       class="collapsed"
-                       data-bs-toggle="collapse"
-                       data-bs-target="#ddmenu_1"
-                       aria-controls="ddmenu_1"
-                       aria-expanded="false"
-                       aria-label="Toggle navigation">
-                        <span class="icon">
-                            <i class="lni lni-dashboard"></i>
-                        </span>
-                        <span class="text">Dashboard</span>
-                    </a>
-                    <ul id="ddmenu_1" class="collapse dropdown-nav">
-                        <li>
-                            <a href="@Url.Action("Index", "Home")">Página principal</a>
-                        </li>
-                    </ul>
-                </li>
-
                 <li class="nav-item">
                     <a href="@Url.Action("Inicio", "Home")">
                         <span class="icon"><i class="lni lni-home"></i></span>
@@ -59,14 +36,14 @@
                 <li class="nav-item">
                     <a href="@Url.Action("Login", "Home")">
                         <span class="icon"><i class="lni lni-user"></i></span>
-                        <span class="text">Registrate</span>
+                        <span class="text">Regístrate</span>
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a href="@Url.Action("Informacion", "Home")">
-                        <span class="icon"><i class="lni lni-map"></i></span>
-                        <span class="text">Rutas</span>
+                    <a href="@Url.Action("Reservas", "Home")">
+                        <span class="icon"><i class="lni lni-ticket"></i></span>
+                        <span class="text">Reservas</span>
                     </a>
                 </li>
 
@@ -78,9 +55,16 @@
                 </li>
 
                 <li class="nav-item">
-                    <a href="@Url.Action("About", "Home")">
+                    <a href="@Url.Action("Informacion", "Home")">
                         <span class="icon"><i class="lni lni-information"></i></span>
                         <span class="text">Acerca de</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="@Url.Action("HistorialReservas", "Home")">
+                        <span class="icon"><i class="lni lni-book"></i></span>
+                        <span class="text">Mis Reservas</span>
                     </a>
                 </li>
             </ul>
@@ -92,28 +76,19 @@
     <main class="main-wrapper">
         <header class="header">
             <div class="container-fluid">
-                <div class="row">
-                    <div class="col-lg-5 col-md-5 col-6">
+                <div class="row align-items-center">
+                    <div class="col-lg-6 col-md-6 col-6">
                         <div class="header-left d-flex align-items-center">
                             <div class="menu-toggle-btn mr-15">
                                 <button id="menu-toggle" class="main-btn primary-btn btn-hover">
                                     <i class="lni lni-chevron-left me-2"></i> Menu
                                 </button>
                             </div>
-
-                            <div class="header-search d-none d-md-flex">
-                                <form action="#">
-                                    <input type="text" placeholder="Buscar..." />
-                                    <button type="submit"><i class="lni lni-search-alt"></i></button>
-                                </form>
-                            </div>
                         </div>
                     </div>
 
-                    <div class="col-lg-7 col-md-7 col-6">
-                        <div class="header-right">
-
-                            <!-- profile start -->
+                    <div class="col-lg-6 col-md-6 col-6">
+                        <div class="header-right d-flex justify-content-end align-items-center">
                             <div class="profile-box ml-15">
                                 <button class="dropdown-toggle bg-transparent border-0" type="button" id="profile"
                                         data-bs-toggle="dropdown" aria-expanded="false">
@@ -154,14 +129,20 @@
                                     </li>
 
                                     <li>
-                                        <a href="@Url.Action("Informacion", "Home")">
-                                            <i class="lni lni-information"></i> Información
+                                        <a href="@Url.Action("Reservas", "Home")">
+                                            <i class="lni lni-ticket"></i> Reservar viaje
                                         </a>
                                     </li>
 
                                     <li>
-                                        <a href="@Url.Action("Horario", "Home")">
-                                            <i class="lni lni-alarm"></i> Horarios
+                                        <a href="@Url.Action("HistorialReservas", "Home")">
+                                            <i class="lni lni-book"></i> Mis Reservas
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a href="@Url.Action("Informacion", "Home")">
+                                            <i class="lni lni-information"></i> Información
                                         </a>
                                     </li>
 
@@ -174,8 +155,6 @@
                                     </li>
                                 </ul>
                             </div>
-                            <!-- profile end -->
-
                         </div>
                     </div>
                 </div>
@@ -183,7 +162,7 @@
         </header>
 
         <section class="section">
-            <div class="container-fluid">
+            <div class="container-fluid pt-30">
                 @RenderBody()
             </div>
         </section>
@@ -193,16 +172,13 @@
                 <div class="row">
                     <div class="col-md-6 order-last order-md-first">
                         <div class="copyright text-center text-md-start">
-                            <p class="text-sm">
-                                Proyecto académico - Pura Vida Buses
-                            </p>
+                            <p class="text-sm">Sistema Pura Vida Buses</p>
                         </div>
                     </div>
 
                     <div class="col-md-6">
                         <div class="terms d-flex justify-content-center justify-content-md-end">
-                            <a href="#0" class="text-sm">Términos</a>
-                            <a href="#0" class="text-sm ml-15">Privacidad</a>
+                            <a href="@Url.Action("Informacion", "Home")" class="text-sm">Información</a>
                         </div>
                     </div>
                 </div>

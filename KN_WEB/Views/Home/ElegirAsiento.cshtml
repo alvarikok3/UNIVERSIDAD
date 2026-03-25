@@ -1,4 +1,4 @@
-@using System.Data
+﻿@using System.Data
 @{
     ViewBag.Title = "Elegir Asiento";
     var ocupados = ViewBag.AsientosOcupados as DataTable;
@@ -116,6 +116,19 @@
     <div class="col-lg-10">
         <div class="card-style mb-30">
             <h2 class="text-center mb-4">Selecciona tu asiento</h2>
+
+            @if (TempData["MensajeReserva"] != null)
+            {
+                <div class="alert alert-warning text-center mb-3">
+                    @TempData["MensajeReserva"]
+                </div>
+            }
+
+            <div class="text-center mb-3">
+                <strong>Ruta:</strong> @ViewBag.Origen → @ViewBag.Destino
+                <br />
+                <strong>Fecha:</strong> @ViewBag.FechaViaje
+            </div>
 
             <div class="bus-container">
                 <div class="bus-front">Frente del bus</div>

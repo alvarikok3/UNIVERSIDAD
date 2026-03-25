@@ -1,0 +1,88 @@
+@using System.Data
+@{
+    ViewBag.Title = "Historial de Reservas";
+    var historial = ViewBag.Historial as DataTable;
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-11">
+        <div class="card-style mb-30">
+            <h2 class="mb-25 text-center">Historial de Reservas</h2>
+
+            @if (TempData["MensajeReserva"] != null)
+            {
+                <div class="alert alert-success text-center mb-3">
+                    @TempData["MensajeReserva"]
+                </div>
+            }
+
+            @if (historial != null && historial.Rows.Count > 0)
+            {
+                <div class="table-wrapper table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th><h6>ID</h6></th>
+                                <th><h6>Origen</h6></th>
+                                <th><h6>Destino</h6></th>
+                                <th><h6>Fecha</h6></th>
+                                <th><h6>Hora</h6></th>
+                                <th><h6>Pasajeros</h6></th>
+                                <th><h6>Asiento</h6></th>
+                                <th><h6>Pago</h6></th>
+                                <th><h6>Estado</h6></th>
+                                <th><h6>Acción</h6></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (DataRow fila in historial.Rows)
+                            {
+                                bool activa = Convert.ToBoolean(fila["estado"]);
+
+                                <tr>
+                                    <td>@fila["id_reserva"]</td>
+                                    <td>@fila["origen"]</td>
+                                    <td>@fila["destino"]</td>
+                                    <td>@Convert.ToDateTime(fila["fecha_viaje"]).ToString("yyyy-MM-dd")</td>
+                                    <td>@fila["hora_salida"]</td>
+                                    <td>@fila["cantidad_pasajeros"]</td>
+                                    <td>@(fila["numero_asiento"] == DBNull.Value ? "Sin asiento" : fila["numero_asiento"].ToString())</td>
+                                    <td>@fila["estado_pago"]</td>
+                                    <td>
+                                        @if (activa)
+                                        {
+                                            <span class="badge bg-success">Activa</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">Cancelada</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (activa)
+                                        {
+                                            <a href="@Url.Action("CancelarReserva", "Home", new { idReserva = fila["id_reserva"] })"
+                                               class="main-btn danger-btn btn-hover btn-sm">
+                                                Cancelar
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">No disponible</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-warning text-center">
+                    No tienes reservas registradas.
+                </div>
+            }
+        </div>
+    </div>
+</div>

@@ -237,15 +237,54 @@ namespace KN_WEB.Controllers
             string conexion = ConfigurationManager.ConnectionStrings["KN_WEB_DB"].ConnectionString;
             DataTable asientosOcupados = new DataTable();
 
+            string origen = "";
+            string destino = "";
+            DateTime fechaViaje = DateTime.Now;
+
             using (SqlConnection con = new SqlConnection(conexion))
             {
-                string query = "SELECT numero_asiento FROM AsientoReserva";
-                SqlDataAdapter da = new SqlDataAdapter(query, con);
+                con.Open();
+
+                string queryReserva = @"SELECT origen, destino, fecha_viaje
+                                        FROM Reserva
+                                        WHERE id_reserva = @id_reserva";
+
+                SqlCommand cmdReserva = new SqlCommand(queryReserva, con);
+                cmdReserva.Parameters.AddWithValue("@id_reserva", idReserva);
+
+                SqlDataReader reader = cmdReserva.ExecuteReader();
+
+                if (reader.Read())
+                {
+                    origen = reader["origen"].ToString();
+                    destino = reader["destino"].ToString();
+                    fechaViaje = Convert.ToDateTime(reader["fecha_viaje"]);
+                }
+
+                reader.Close();
+
+                string queryAsientos = @"
+                    SELECT ar.numero_asiento
+                    FROM AsientoReserva ar
+                    INNER JOIN Reserva r ON ar.id_reserva = r.id_reserva
+                    WHERE r.origen = @origen
+                      AND r.destino = @destino
+                      AND r.fecha_viaje = @fecha_viaje
+                      AND r.estado = 1";
+
+                SqlDataAdapter da = new SqlDataAdapter(queryAsientos, con);
+                da.SelectCommand.Parameters.AddWithValue("@origen", origen);
+                da.SelectCommand.Parameters.AddWithValue("@destino", destino);
+                da.SelectCommand.Parameters.AddWithValue("@fecha_viaje", fechaViaje.Date);
                 da.Fill(asientosOcupados);
             }
 
             ViewBag.IdReserva = idReserva;
             ViewBag.AsientosOcupados = asientosOcupados;
+            ViewBag.Origen = origen;
+            ViewBag.Destino = destino;
+            ViewBag.FechaViaje = fechaViaje.ToString("yyyy-MM-dd");
+
             return View();
         }
 
@@ -258,14 +297,60 @@ namespace KN_WEB.Controllers
             {
                 con.Open();
 
-                string query = @"INSERT INTO AsientoReserva (id_reserva, numero_asiento)
-                                 VALUES (@id_reserva, @numero_asiento)";
+                string origen = "";
+                string destino = "";
+                DateTime fechaViaje = DateTime.Now;
 
-                SqlCommand cmd = new SqlCommand(query, con);
-                cmd.Parameters.AddWithValue("@id_reserva", idReserva);
-                cmd.Parameters.AddWithValue("@numero_asiento", numeroAsiento);
+                string queryReserva = @"SELECT origen, destino, fecha_viaje
+                                        FROM Reserva
+                                        WHERE id_reserva = @id_reserva";
 
-                cmd.ExecuteNonQuery();
+                SqlCommand cmdReserva = new SqlCommand(queryReserva, con);
+                cmdReserva.Parameters.AddWithValue("@id_reserva", idReserva);
+
+                SqlDataReader reader = cmdReserva.ExecuteReader();
+
+                if (reader.Read())
+                {
+                    origen = reader["origen"].ToString();
+                    destino = reader["destino"].ToString();
+                    fechaViaje = Convert.ToDateTime(reader["fecha_viaje"]);
+                }
+
+                reader.Close();
+
+                string queryValidar = @"
+                    SELECT COUNT(*)
+                    FROM AsientoReserva ar
+                    INNER JOIN Reserva r ON ar.id_reserva = r.id_reserva
+                    WHERE ar.numero_asiento = @numero_asiento
+                      AND r.origen = @origen
+                      AND r.destino = @destino
+                      AND r.fecha_viaje = @fecha_viaje
+                      AND r.estado = 1";
+
+                SqlCommand cmdValidar = new SqlCommand(queryValidar, con);
+                cmdValidar.Parameters.AddWithValue("@numero_asiento", numeroAsiento);
+                cmdValidar.Parameters.AddWithValue("@origen", origen);
+                cmdValidar.Parameters.AddWithValue("@destino", destino);
+                cmdValidar.Parameters.AddWithValue("@fecha_viaje", fechaViaje.Date);
+
+                int existe = (int)cmdValidar.ExecuteScalar();
+
+                if (existe > 0)
+                {
+                    TempData["MensajeReserva"] = "Ese asiento ya fue reservado para ese viaje y esa fecha.";
+                    return RedirectToAction("ElegirAsiento", new { idReserva = idReserva });
+                }
+
+                string queryInsert = @"INSERT INTO AsientoReserva (id_reserva, numero_asiento)
+                                       VALUES (@id_reserva, @numero_asiento)";
+
+                SqlCommand cmdInsert = new SqlCommand(queryInsert, con);
+                cmdInsert.Parameters.AddWithValue("@id_reserva", idReserva);
+                cmdInsert.Parameters.AddWithValue("@numero_asiento", numeroAsiento);
+
+                cmdInsert.ExecuteNonQuery();
             }
 
             return RedirectToAction("DatosCliente", new { idReserva = idReserva });
@@ -369,6 +454,67 @@ namespace KN_WEB.Controllers
             }
 
             return View();
+        }
+
+        public ActionResult HistorialReservas()
+        {
+            if (Session["UsuarioEmail"] == null)
+            {
+                return RedirectToAction("Inicio");
+            }
+
+            string conexion = ConfigurationManager.ConnectionStrings["KN_WEB_DB"].ConnectionString;
+            DataTable tabla = new DataTable();
+
+            using (SqlConnection con = new SqlConnection(conexion))
+            {
+                con.Open();
+
+                string query = @"
+                    SELECT 
+                        r.id_reserva,
+                        r.origen,
+                        r.destino,
+                        r.fecha_viaje,
+                        r.hora_salida,
+                        r.cantidad_pasajeros,
+                        r.estado_pago,
+                        r.estado,
+                        ar.numero_asiento
+                    FROM Reserva r
+                    LEFT JOIN AsientoReserva ar ON r.id_reserva = ar.id_reserva
+                    INNER JOIN Usuario u ON r.id_usuario = u.id_usuario
+                    WHERE u.email = @email
+                    ORDER BY r.id_reserva DESC";
+
+                SqlDataAdapter da = new SqlDataAdapter(query, con);
+                da.SelectCommand.Parameters.AddWithValue("@email", Session["UsuarioEmail"].ToString());
+                da.Fill(tabla);
+            }
+
+            ViewBag.Historial = tabla;
+            return View();
+        }
+
+        public ActionResult CancelarReserva(int idReserva)
+        {
+            string conexion = ConfigurationManager.ConnectionStrings["KN_WEB_DB"].ConnectionString;
+
+            using (SqlConnection con = new SqlConnection(conexion))
+            {
+                con.Open();
+
+                string query = @"UPDATE Reserva
+                                 SET estado = 0
+                                 WHERE id_reserva = @id_reserva";
+
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@id_reserva", idReserva);
+                cmd.ExecuteNonQuery();
+            }
+
+            TempData["MensajeReserva"] = "Reserva cancelada correctamente.";
+            return RedirectToAction("HistorialReservas");
         }
 
         public ActionResult CerrarSesion()
